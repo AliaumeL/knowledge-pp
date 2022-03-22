@@ -1,0 +1,28 @@
+\documentclass{article}
+
+\usepackage[utf8x]{inputenc}
+\usepackage{hyperref}
+\usepackage{amsthm, amsmath}
+\usepackage[hyperref,xcolor,notion]{knowledge}
+\newtheorem{theorem}{Theorem}
+\usepackage{xcolor}
+
+
+\newenvironment{uke}[2]{
+    \begin{quote}\textcolor{brown}{\textit{Undefined environment #1 (#2)}}
+}{
+    \end{quote}
+}
+
+\newcommand{\ukc}[2]{\textcolor{brown}{#1(#2)}}
+
+\author{Aliaume Lopez}
+\title{ColTeX: a modern approach to TeX}
+
+\begin{document}
+
+\input{generated.tex}
+
+\end{document}
+
+

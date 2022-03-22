@@ -1,0 +1,186 @@
+\maketitle
+
+In ColTeX we can write text as we would in \LaTeX
+without concerns\footnote{most of the time...}.
+But we also have access to a simili lambda calculus
+in Call-by-name under the hood, and fear not,
+this calculus is terminating!
+
+In this calculus one can define functions
+as below (note to myself, add a verbatim environment).
+A function call is simply obtained by starting
+with ":" and then writing a correct token,
+that is, a sequence of characters that
+is not in \verb| \t\n()[]:\\-+=/{}<>-_;,#%$*@.\"'|
+nor contains the symbol \verb"|".
+As a matter of fact you can very well write
+unicode δ, λ, γ, but \LaTeX might complain about it.
+
+Okay so first demo: a simple list is obtained as follows
+ - first element
+ - second element
+   that can use several lines
+ - and then a third one
+
+Ah, here you might see that the command \verb|item|
+is not defined! Let us provide a simple definition below
+
+item():
+  rawtex:
+    \item :body
+
+This builds a new function \verb|item|
+with only one argument \verb|body| which is always an implicit
+argument of every command in ColTeX.
+
+Let us now try it!
+
+\begin{itemize}
+    - first item
+    - second item
+\end{itemize}
+
+Not very satisfactory as we are still required to use the
+\LaTeX commands for itemize environments... While we are at it,
+let us define the :ColTeX command.
+
+ColTeX: \textit{ColTeX}
+
+We can now use it :ColTeX anywhere in the code.
+Similarly, we can define a wrapper around
+\verb|itemize|.
+
+list():
+  rawtex:
+    \begin{itemize}
+    :body
+    \end{itemize}
+
+This is now simpler to write
+:list
+  - first element
+  - second element
+
+Let us now do the same for descriptions.
+
+descr():
+  rawtex:
+    \begin{description}
+    :body
+    \end{description}
+
+d(name):
+  rawtex:
+    \item[:name] :body
+
+:descr
+  :d(coucou)
+    a first description item
+  :d(salut)
+    a second description item
+
+Well, up until now, this is a tiny bit better than newcommands,
+but not much. One thing that can be added is the ability
+to define variables and refer to them via "pointers".
+
+complex:
+  structure:
+    nested: value
+
+The value of \verb|complex.structure.nested| is
+\verb|@complex.structure.nested|. Pretty cool?
+Now, in general, when constructing :ColTeX documents
+you generate in fact a complex structure that is
+then turned into \LaTeX by rendering the inline
+values.
+
+One way to control how the nodes are labelled
+is to use the built-in command \verb|withLabel|.
+We can directly build a nice theorem constructor
+as follows:
+
+theorem(name, label):
+  :withLabel(:label)
+    ref: \hyperref[:label]{theorem \ref{:label}}
+    Ref: \hyperref[:label]{Theorem \ref{:label}}
+    rawtex:
+        \begin{theorem}[:name]
+        \label{:label}
+        :body
+        \end{theorem}
+
+
+Concretely, when calling this function on a value \verb|label|,
+the output is a definition that associates to \verb|label|
+the body of \verb|withLabel| with variable interpolation.
+
+:theorem(My very first theorem,thmlbl)
+  what a nice theorem you have sir!
+
+The extra structure allows us to
+use pointers to get the references
+such as @thmlbl.ref or @thmlbl.Ref.
+Note that we must use a proper "token" as label
+to simplify parsing.
+Usually in \LaTeX you would separate
+using semicolons or dots the labels using some notion
+of "layers", for instance: section, type, name.
+
+For the sake of the argument, let us now define a section
+command, also with a label. This will allow us to nest
+theorems and sections.
+
+section(name, label):
+  :withLabel(:label)
+    ref: \hyperref[:label]{section \ref{:label}}
+    Ref: \hyperref[:label]{Section \ref{:label}}
+    rawtex:
+        \section{:name}\label{:label}
+        :body
+
+:section(Some section,seclabel)
+  :theorem(A theorem inside a section,thmlabel)
+    Ah, what a nice theorem!
+
+We can now refer to several parts of the document:
+@seclabel.ref, @seclabel.thmlabel.ref but also @thmlbl.ref.
+Let us now inspect how this can be used in conjunction with
+the "knowledge" package. We build a \verb|kl| command
+to introduce the proper structure: it will give access
+to an introduction, a definition, and a reference.
+Note that pointer resolution cannot create new reductions,
+in particular it is pointless to do : followed by @.
+We use the scoping mechanism of "knowledge"
+with a second built-in command \verb|curpath| that
+evaluates to the path of the current position in
+the document tree.
+
+kl(name):
+  :withLabel(:name)
+    intro: \AP \intro[:curpath]{:name}
+    def: \knowledge{:curpath}{notion}
+    \kl[:curpath:name.]{:name}
+
+We can create a new knowledge :kl(knowledge)
+@knowledge.def
+that can be introduced with @knowledge.intro.
+It can then be referenced using @knowledge.
+This can be used in a theorem too.
+
+:theorem(Third time,thm3)
+  :kl(x) @x.def
+  Let $@x.intro$ be the nice variable
+  that we want to use.
+
+  Reuse @x
+\begin{proof}
+  We know that $@thm3.x$ is a
+  variable of kind ...
+\end{proof}
+
+What can we expect?
+:list
+  - Better handling of pointers with special syntax?
+  - Integration with tools to introduce global knowledges
+  - A \textbf{math mode} parser where every token is a command
+  - Remove some of the ugly hacks?
