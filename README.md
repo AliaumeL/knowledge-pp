@@ -20,7 +20,7 @@ Given a valid document, you can simply run
 
 To get the corresponding LaTeX output.
 
-In practise, this is indentend to be used in a workflow using a Makefile,
+In practise, this is intended to be used in a workflow using a Makefile,
 or the specific input triggers from latexmk.
 
 
