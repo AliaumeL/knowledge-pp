@@ -13,7 +13,7 @@
 # - No side effect
 # - Strongly normalising
 
-from coltypes import *
+from knowledge_pp.coltypes import *
 
 
 def reduce_node(env, c, program: ColTeX):

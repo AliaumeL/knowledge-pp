@@ -4,9 +4,9 @@
 #
 # On an idea of Thomas Colcombet
 
-from coltypes import Pointer, Def, Call, Inline, List, Line, ColTeX, merge_inlines
+from knowledge_pp.coltypes import Pointer, Def, Call, Inline, List, Line, ColTeX, merge_inlines
 
-from parsutils import (
+from knowledge_pp.parsutils import (
     is_space,
     is_token,
     is_symbol,

@@ -4,7 +4,7 @@
 #
 # On an idea of Thomas Colcombet
 
-from coltypes import *
+from knowledge_pp.coltypes import *
 
 
 def to_latex(p: ColTeX) -> str:

@@ -11,7 +11,7 @@
 #   - error handling and reporting
 #   - work using the Line datatype
 
-from coltypes import *
+from knowledge_pp.coltypes import *
 
 
 special_symbols = " \t\n()[]{}:\\-+=/|<>-_;,#%$*@.\"'"

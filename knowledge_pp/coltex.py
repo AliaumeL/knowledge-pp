@@ -8,11 +8,11 @@
 # from typing import List, Union, Dict, Optional
 import itertools
 
-from types import *
-from evaluator import *
-from parsutils import *
-from parser import *
-from latex import *
+from knowledge_pp.coltypes import *
+from knowledge_pp.evaluator import *
+from knowledge_pp.parsutils import *
+from knowledge_pp.parser import *
+from knowledge_pp.latex import *
 
 
 def withLabel(env, params, position, body):
@@ -34,16 +34,10 @@ def currentPosition(env, params, position, body):
 
 
 def evaluate_program(path):
-    t, _ = coltex(list(iterate_file("test.coltex")))
-    # print("".join(str(x) for x in t))
+    t, _ = coltex(list(iterate_file(path)))
     _, f = reduce_forest(
         {"withLabel": withLabel, "curpath": currentPosition}, Pointer(None, []), t
     )
     r = extract_pointers_forest(f)
     p = resolve_forest(r, Pointer(None, []), f)
-    # print("".join(str(x) for x in f))
     print(to_latex_list(p))
-
-
-if __name__ == "__main__":
-    evaluate_program("test.coltex")
