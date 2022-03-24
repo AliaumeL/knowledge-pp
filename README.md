@@ -12,6 +12,15 @@ This is a proof of concept, **do not use it**.
 An example document can be found in `examples/` along
 with a Makefile to generate a document called `main.pdf`.
 
+## Wanted Features
+
+1. LSP support via https://github.com/openlawlibrary/pygls
+2. Strongly terminating
+3. Lexical scoping by default
+4. Contexts à la React (dynamic scoping)
+5. Hooks for `custom DSL` languages, that are left un-interpreted
+6. A math mode as a custom DSL
+
 ## How to use
 
 Given a valid document, you can simply run
